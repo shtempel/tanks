@@ -13,12 +13,22 @@ Sound.prototype.stop = function (soundName) {
     sound.pause(soundName);
 };
 
-function tankSoundManager(tank) {
-    if (tank.getMoving() === true) {
-        sound.stop("parking");
-        sound.play("moving");
+function tankSounds(tank) {
+    if (tank.getMoving()) {
+        sound.stop(SOUNDS.stop);
+        sound.play(SOUNDS.run);
     } else {
-        sound.stop("moving");
-        sound.play("parking");
+        sound.stop(SOUNDS.run);
+        sound.play(SOUNDS.stop);
+    }
+}
+
+function soundManager(arr) {
+    for (var i = 0; i < arr.length; i++) {
+        switch (arr[i].type) {
+            case "playerTank":
+                //tankSounds(arr[i]);
+                break;
+        }
     }
 }

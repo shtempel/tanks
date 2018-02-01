@@ -1,4 +1,4 @@
-function Tank(x, y, width, height, speed, tankX, tankY, type, dir) {
+function Tank(x, y, width, height, speed, tankX, tankY, type, dir, hit, score) {
     this.x = x;
     this.y = y;
     this.width = width;
@@ -10,6 +10,8 @@ function Tank(x, y, width, height, speed, tankX, tankY, type, dir) {
     this.tankX = tankX;
     this.tankY = tankY;
     this.dir = dir;
+    this.hit = hit;
+    this.score = score;
 }
 
 Tank.prototype = {
@@ -24,80 +26,89 @@ Tank.prototype = {
     },
     setDirection: function (tank, dir) {
         tank.dir = dir;
+    },
+    setHit: function (hit) {
+        this.hit = hit;
+    },
+    getHit: function () {
+        return this.hit;
     }
 };
 Tank.prototype.draw = function () {
     if (this.dir === DIRECTIONS.UP) {
-        CTX.drawImage(SPRITE, this.tankX, this.tankY, 32, 32, this.x, this.y, TILE_WIDTH, TILE_HEIGHT);
+        CTX.drawImage(SPRITE, this.tankX, this.tankY, 30, 30, this.x, this.y, TILE_WIDTH, TILE_HEIGHT);
     } else if (this.dir === DIRECTIONS.DOWN) {
-        CTX.drawImage(SPRITE, this.tankX + 34, this.tankY, 32, 32, this.x, this.y, TILE_WIDTH, TILE_HEIGHT);
+        CTX.drawImage(SPRITE, this.tankX + 34, this.tankY, 30, 30, this.x, this.y, TILE_WIDTH, TILE_HEIGHT);
     } else if (this.dir === DIRECTIONS.RIGHT) {
-        CTX.drawImage(SPRITE, this.tankX + 96, this.tankY, 32, 32, this.x, this.y, TILE_WIDTH, TILE_HEIGHT);
+        CTX.drawImage(SPRITE, this.tankX + 96, this.tankY, 30, 30, this.x, this.y, TILE_WIDTH, TILE_HEIGHT);
     } else if (this.dir === DIRECTIONS.LEFT) {
-        CTX.drawImage(SPRITE, this.tankX + 66, this.tankY, 32, 32, this.x, this.y, TILE_WIDTH, TILE_HEIGHT);
+        CTX.drawImage(SPRITE, this.tankX + 66, this.tankY, 30, 30, this.x, this.y, TILE_WIDTH, TILE_HEIGHT);
     }
 };
-function initTank() {
-    OBJECTS.push(new Tank(PLAYER_START_LOCATION.x, PLAYER_START_LOCATION.y, 40,
+
+function initTank(arr) {
+    arr.push(new Tank(PLAYER_START_LOCATION.x, PLAYER_START_LOCATION.y, 40,
             40, 2, IMAGES_COORDS.tank.x, IMAGES_COORDS.tank.y,
             "playerTank", DIRECTIONS.UP));
+    arr.push(new Tank(ENEMY_START_LOCATIONS.FAT.x, ENEMY_START_LOCATIONS.FAT.y, 40,
+            40, 2, IMAGES_COORDS.enemyTankFat.x, IMAGES_COORDS.enemyTankFat.y,
+            "enemyTankFat", DIRECTIONS.DOWN, undefined, TANKS_REWARD.fat));
+    arr.push(new Tank(ENEMY_START_LOCATIONS.FAST.x, ENEMY_START_LOCATIONS.FAST.y, 40,
+            40, 2, IMAGES_COORDS.enemyTankFast.x, IMAGES_COORDS.enemyTankFast.y,
+            "enemyTankFast", DIRECTIONS.DOWN, undefined, TANKS_REWARD.fast));
+    arr.push(new Tank(ENEMY_START_LOCATIONS.NORMAL.x, ENEMY_START_LOCATIONS.NORMAL.y, 40,
+            40, 2, IMAGES_COORDS.enemyTankNormal.x, IMAGES_COORDS.enemyTankNormal.y,
+            "enemyTankNormal", DIRECTIONS.DOWN, undefined, TANKS_REWARD.normal));
 }
 
-function getPlayerTank() {
-    var playerTank;
-    for (var i = 0; i < OBJECTS.length; i++) {
-        if (OBJECTS[i].type == "playerTank") {
-            playerTank = OBJECTS[i];
-        }
-    }
-    return playerTank;
-}
-
-Tank.prototype.playerMove = function (dir) {
+Tank.prototype.playerMove = function (dir, arr) {
     switch (dir) {
         case DIRECTIONS.UP:
-            getPlayerTank().moveUp();
-            getPlayerTank().setDirection(getPlayerTank(), DIRECTIONS.UP);
+            getPlayerTank(arr).moveUp(arr);
+            getPlayerTank(arr).setDirection(getPlayerTank(arr), DIRECTIONS.UP);
             break;
         case DIRECTIONS.DOWN:
-            getPlayerTank().moveDown();
-            getPlayerTank().setDirection(getPlayerTank(), DIRECTIONS.DOWN);
+            getPlayerTank(arr).moveDown(arr);
+            getPlayerTank(arr).setDirection(getPlayerTank(arr), DIRECTIONS.DOWN);
             break;
         case DIRECTIONS.LEFT:
-            getPlayerTank().moveLeft();
-            getPlayerTank().setDirection(getPlayerTank(), DIRECTIONS.LEFT);
+            getPlayerTank(arr).moveLeft(arr);
+            getPlayerTank(arr).setDirection(getPlayerTank(arr), DIRECTIONS.LEFT);
             break;
         case DIRECTIONS.RIGHT:
-            getPlayerTank().moveRight();
-            getPlayerTank().setDirection(getPlayerTank(), DIRECTIONS.RIGHT);
+            getPlayerTank(arr).moveRight(arr);
+            getPlayerTank(arr).setDirection(getPlayerTank(arr), DIRECTIONS.RIGHT);
             break;
     }
 };
 
-function drawAllTanks() {
-    for (var i = 0; i < OBJECTS.length; i++) {
-        if (OBJECTS[i].type === "playerTank")
-            OBJECTS[i].draw();
+function drawAllTanks(arr) {
+    for (var i = 0; i < arr.length; i++) {
+        if (arr[i].type === "playerTank" || arr[i].type === "enemyTankFat" ||
+                arr[i].type === "enemyTankFast" || arr[i].type === "enemyTankNormal") {
+
+        }
+        arr[i].draw();
     }
 }
 
-Tank.prototype.moveLeft = function () {
-    move(getPlayerTank(), -getPlayerTank().speed, 0);
+Tank.prototype.moveLeft = function (arr) {
+    move(getPlayerTank(), -getPlayerTank().speed, 0, arr);
 };
 
-Tank.prototype.moveRight = function () {
-    move(getPlayerTank(), getPlayerTank().speed, 0);
+Tank.prototype.moveRight = function (arr) {
+    move(getPlayerTank(), getPlayerTank().speed, 0, arr);
 };
 
-Tank.prototype.moveUp = function () {
-    move(getPlayerTank(), 0, -getPlayerTank().speed);
+Tank.prototype.moveUp = function (arr) {
+    move(getPlayerTank(), 0, -getPlayerTank().speed, arr);
 };
 
-Tank.prototype.moveDown = function () {
-    move(getPlayerTank(), 0, getPlayerTank().speed);
+Tank.prototype.moveDown = function (arr) {
+    move(getPlayerTank(), 0, getPlayerTank().speed, arr);
 };
 
-function move(tank, x, y) {
+function move(tank, x, y, arr) {
     var nx = tank.x + x,
             ny = tank.y + y;
 
@@ -119,14 +130,14 @@ function move(tank, x, y) {
     };
 
     var possible = true;
-    for (var i = 0; i < OBJECTS.length; i++) {
-        if (collision(fantomTank, OBJECTS[i]) === true && OBJECTS[i].type === "brick") {
+    for (var i = 0; i < arr.length; i++) {
+        if (collision(fantomTank, arr[i]) && arr[i].type === "brick") {
             possible = false;
             break;
-        } else if (collision(fantomTank, OBJECTS[i]) === true && OBJECTS[i].type === "concrete") {
+        } else if (collision(fantomTank, arr[i]) && arr[i].type === "concrete") {
             possible = false;
             break;
-        } else if (collision(fantomTank, OBJECTS[i]) === true && OBJECTS[i].type === "flag") {
+        } else if (collision(fantomTank, arr[i]) && arr[i].type === "flag") {
             possible = false;
             break;
         }
@@ -138,6 +149,6 @@ function move(tank, x, y) {
     }
 }
 
-Tank.prototype.shoot = function () {
-    initBullet();   
+Tank.prototype.shoot = function (arr) {
+    initBullet(arr);
 };

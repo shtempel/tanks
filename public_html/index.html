@@ -4,34 +4,38 @@
         <meta charset="UTF-8">
         <link rel="icon" href="data:;base64,iVBORw0KGgo=">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="stylesheet" type="text/css" href="css/style.css">        
+        <link rel="stylesheet" type="text/css" href="css/style.css">   
+        <script type="text/javascript">window.onload = function () {
+                main();
+            }</script>     
     <body>	
         <div id = "srcImg">
-            <img src="img/tankAll.gif" id = "tankAll"/>
+            <img src="img/sprite.png" id = "sprite"/>
         </div>
         <div class="canvas">
-            <canvas id="canvas" width="720" height="624"></canvas>            
+            <canvas id="canvas" width="624" height="624"></canvas>            
         </div>
-        <script type="text/javascript" src="js/init.js"></script>
         <script type="text/javascript" src="js/constants.js"></script>
         <script type="text/javascript" src="js/sound.js"></script>
         <script type="text/javascript" src="js/controller.js"></script>
         <script type="text/javascript" src="js/tank.js"></script>
-         <script type="text/javascript" src="js/bullet.js"></script>
+        <script type="text/javascript" src="js/bullet.js"></script>
         <script type="text/javascript" src="js/levelMap.js"></script>
+        <script type="text/javascript" src="js/explosions.js"></script>
         <script type="text/javascript" src="js/screens/startScreen.js"></script>
         <script type="text/javascript" src="js/screens/battleScreen.js"></script>
+        <script type="text/javascript" src="js/screens/gameOverScreen.js"></script>
+        <script type="text/javascript" src="js/screens/resultScreen.js"></script>
+        <script type="text/javascript" src="js/screens/winScreen.js"></script>
 
-
-        <audio id="attack" src="sound/attack.mp3"></audio>
-        <audio id="bomb0" src="sound/bomb0.mp3"></audio>
-        <audio id="bomb1" src="sound/bomb1.mp3"></audio>
-        <audio id="food" src="sound/food.mp3"></audio>
         <audio id="stageStart" src="sound/stageStart.mp3"></audio>
         <audio id="shootOver" src="sound/shootOver.mp3"></audio>
         <audio id="parking" src="sound/parking.wav"></audio>
         <audio id="moving" src="sound/moving.wav"></audio>
-
+        <audio id="attack" src="sound/attack.mp3"></audio>
+        <audio id="bomb0" src="sound/bomb0.mp3"></audio>
+        <audio id="bomb1" src="sound/bomb1.mp3"></audio>
+        <audio id="food" src="sound/food.mp3"></audio>
         <script type="text/javascript" src="js/main.js"></script>
     </body>
 </html>
