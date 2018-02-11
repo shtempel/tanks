@@ -5,8 +5,9 @@ body {
 }
 
 .canvas {
-    width: 720px;
+    width: 624px;
     height: 624px;
+    float: left;
 }
 
 .btn-div {
@@ -14,6 +15,20 @@ body {
     width: 200px;
 }
 
-#srcImg{
+#srcImg {
     display:none;
+}
+
+.side-help {
+    float: left;
+    margin-left: 50px;
+}
+
+.side-help span {
+    display: inline-block;
+    margin-top: 20px;
+}
+
+.bla {
+    margin: 20px 0 20px 0;
 }

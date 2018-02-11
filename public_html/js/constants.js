@@ -7,6 +7,8 @@ var CANVAS = document.getElementById("canvas"),
         BATTLEFIELD_HEIGHT = 624,
         TILE_WIDTH = 48,
         TILE_HEIGHT = 48,
+        GAME_RUN,
+        PAUSE = false,
         GAME_STATE = {
             STATE_GAME_LAUNCHED: 1,
             STATE_SPLASH: 2,
@@ -43,7 +45,7 @@ var CANVAS = document.getElementById("canvas"),
             gameOver: [0, 735],
             victory: [15, 435]
         },
-        SCORE = 0,
+        SCORE,
         TANKS_DESTROYED = {
             fat: 0,
             fast: 0,
@@ -113,7 +115,7 @@ var CANVAS = document.getElementById("canvas"),
                 y: 0
             },
             FAST: {
-                x: 576,
+                x: 580,
                 y: 0
             },
             NORMAL: {
@@ -128,7 +130,7 @@ var CANVAS = document.getElementById("canvas"),
             RIGHT: 3
         },
         START_SCREEN_SPEED = 10,
-        READY_SPEED = 20,
+        SPLASH_SCREEN_SPEED = 20,
         GAME_OVER_SPEED = 2,
         START_SCREEN = new Image(),
         READY_PIC = new Image(),

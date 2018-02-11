@@ -1,5 +1,5 @@
 "use strict";
-function Bullet(x, y, width, height, speed, bulletX, bulletY, type, dir) {
+function Bullet(x, y, width, height, speed, bulletX, bulletY, type, subType, direction, id) {
     this.x = x;
     this.y = y;
     this.speed = speed;
@@ -7,15 +7,49 @@ function Bullet(x, y, width, height, speed, bulletX, bulletY, type, dir) {
     this.height = height;
     this.bulletX = bulletX;
     this.bulletY = bulletY;
-    this.dir = dir;
+    this.direction = direction;
     this.type = type;
+    this.subType = subType;
     this.bulletFlight = false;
-    initXY.call(this);
+    center.call(this);
+    this.id = id;
 }
-;
 
-function initXY() {
-    switch (this.dir) {
+
+Bullet.prototype.shoot = function () {
+};
+
+Bullet.prototype.move = function () {
+    switch (this.direction) {
+        case DIRECTIONS.UP:
+            this.y -= this.speed;
+            break;
+        case DIRECTIONS.DOWN:
+            this.y += this.speed;
+            break;
+        case DIRECTIONS.LEFT:
+            this.x -= this.speed;
+            break;
+        case DIRECTIONS.RIGHT:
+            this.x += this.speed;
+            break;
+    }
+};
+
+Bullet.prototype.draw = function () {
+    if (this.direction === DIRECTIONS.UP) {
+        CTX.drawImage(SPRITE, this.bulletX, this.bulletY, 6, 6, this.x, this.y, 10, 10);
+    } else if (this.direction === DIRECTIONS.DOWN) {
+        CTX.drawImage(SPRITE, this.bulletX + 6, this.bulletY, 6, 6, this.x, this.y, 10, 10);
+    } else if (this.direction === DIRECTIONS.RIGHT) {
+        CTX.drawImage(SPRITE, this.bulletX + 18, this.bulletY, 6, 6, this.x, this.y, 10, 10);
+    } else if (this.direction === DIRECTIONS.LEFT) {
+        CTX.drawImage(SPRITE, this.bulletX + 12, this.bulletY, 6, 6, this.x, this.y, 10, 10);
+    }
+};
+
+function center() {
+    switch (this.direction) {
         case DIRECTIONS.UP:
             this.x += 18;
             this.y -= 3;
@@ -34,157 +68,120 @@ function initXY() {
             break;
     }
 }
-;
 
-Bullet.prototype = {
-    setDirection: function (bullet, dir) {
-        bullet.dir = dir;
-    },
-    setFlight: function () {
-        this.bulletFlight = true;
+function changeDirection() {
+    switch (randomInteger(1, 4)) {
+        case 1:
+            return DIRECTIONS.DOWN;
+            break;
+        case 2:
+            return DIRECTIONS.LEFT;
+            break;
+        case 3:
+            return DIRECTIONS.RIGHT;
+            break;
+        case 4:
+            return DIRECTIONS.UP;
+            break;
     }
-};
+}
 
-Bullet.prototype.draw = function () {
-    if (this.dir === DIRECTIONS.UP) {
-        CTX.drawImage(SPRITE, this.bulletX, this.bulletY, 6, 6, this.x, this.y, 10, 10);
-    } else if (this.dir === DIRECTIONS.DOWN) {
-        CTX.drawImage(SPRITE, this.bulletX + 6, this.bulletY, 6, 6, this.x, this.y, 10, 10);
-    } else if (this.dir === DIRECTIONS.RIGHT) {
-        CTX.drawImage(SPRITE, this.bulletX + 18, this.bulletY, 6, 6, this.x, this.y, 10, 10);
-    } else if (this.dir === DIRECTIONS.LEFT) {
-        CTX.drawImage(SPRITE, this.bulletX + 12, this.bulletY, 6, 6, this.x, this.y, 10, 10);
-    }
-};
+function randomInteger(min, max) {
+    var rand = min - 0.5 + Math.random() * (max - min + 1);
+    rand = Math.round(rand);
+    return rand;
+}
 
-Bullet.prototype.move = function (arr) {
-    if (bulletMovePossibility(arr, getPlayerBullet(arr))) {
-        switch (this.dir) {
-            case DIRECTIONS.UP:
-                this.y -= this.speed;
-                break;
-            case DIRECTIONS.DOWN:
-                this.y += this.speed;
-                break;
-            case DIRECTIONS.LEFT:
-                this.x -= this.speed;
-                break;
-            case DIRECTIONS.RIGHT:
-                this.x += this.speed;
-                break;
+function bulletsMove(array) {
+    for (var i = 0; i < array.length; i++) {
+        if (array[i].type === "enemyBullet"
+                || array[i].type === "playerBullet") {
+            array[i].move();
         }
     }
-};
+}
 
-function initBullet(arr) {
-    if (checkBullets(arr) < 1) {
-        arr.push(new Bullet(getPlayerTank(arr).x, getPlayerTank(arr).y, 6, 6, 4,
+function drawBullets(array) {
+    for (var i = 0; i < array.length; i++) {
+        if (array[i].type === "playerBullet" || array[i].type === "enemyBullet")
+            array[i].draw();
+    }
+}
+
+function initEnemyBullets(array) {
+    var type;
+    for (var t = 0; t < array.length; t++) {
+        type = array[t].subType + "Bullet";
+        if (array[t].type === "enemyTank" && (getObjectSubType(array, type)).length < 1) {
+            array.push(new Bullet(array[t].x, array[t].y, 6, 6, 4,
+                    IMAGES_COORDS.bullet.x, IMAGES_COORDS.bullet.y, "enemyBullet",
+                    array[t].subType + "Bullet", array[t].direction, array[t].id));
+        }
+    }
+}
+
+function initPlayerBullet(array) {
+    if (getObject(array, "playerBullet").length < 1) {
+        array.push(new Bullet(getObject(array, "playerTank")[0].x, getObject(array, "playerTank")[0].y, 6, 6, 4,
                 IMAGES_COORDS.bullet.x, IMAGES_COORDS.bullet.y,
-                "playerBullet", getPlayerTank(arr).dir));
+                "playerBullet", "", getObject(array, "playerTank")[0].direction));
         sound.play(SOUNDS.shoot);
-    } else {
-        return;
     }
 }
 
-function checkBullets(arr) {
-    var temp = [];
-    for (var i = 0; i < arr.length; i++) {
-        if (arr[i].type === "playerBullet") {
-            temp.push(arr[i]);
-        }
-    }
-    return temp.length;
+function updateBullet(array) {
+    bulletsMove(array);
+    bulletLifeCycle(array, getObject(array, "enemyBullet"));
+    bulletLifeCycle(array, getObject(array, "playerBullet"));
+    initEnemyBullets(array);
 }
 
-function bulletDestroy(arr) {
-    for (var i = 0; i < arr.length; i++) {
-        if (arr[i].type === "playerBullet") {
-            arr.splice(i, 1);
-        }
-    }
-}
-
-function bulletMovePossibility(arr) {
-    var possible = true,
-            bullet = getPlayerBullet(arr);
-    for (var i = 0; i < arr.length; i++) {
-        if (checkBullets(arr)) {
-            if (bullet.y < 1) {
-                possible = false;
-            } else if (bullet.x < 1) {
-                possible = false;
-            } else if (bullet.x > BATTLEFIELD_WIDTH) {
-                possible = false;
-            } else if (bullet.y > BATTLEFIELD_HEIGHT) {
-                possible = false;
-            } else if (checkBullets(arr) && (collision(bullet, arr[i]) && arr[i].type === "brick" ||
-                    collision(bullet, arr[i]) && arr[i].type === "concrete" ||
-                    collision(bullet, arr[i]) && arr[i].type === "flag")) {
-                //explosionInit(arr[i].x, arr[i].y, arr);
-                //bulletDestroy(arr);
-                //deleteBlock(arr, arr[i].x, arr[i].y);
-                //explosionDelete(arr);
-                possible = false;
+function bulletLifeCycle(array, bullet) {
+    for (var t = 0; t < bullet.length; t++) {
+        if (array.indexOf(bullet[t])) {
+            for (var i = 0; i < array.length; i++) {
+                if (collision(bullet[t], array[i])) {
+                    switch (array[i].type) {
+                        case "brick":
+                            bulletAftermath(array, bullet[t], SOUNDS.shootBrick, array[i].x, array[i].y);
+                            array.splice(i, 1);
+                            break;
+                        case "concrete":
+                            bulletAftermath(array, bullet[t], SOUNDS.shootOver, array[i].x, array[i].y);
+                            break;
+                        case "flag":
+                            bulletAftermath(array, bullet[t], SOUNDS.explode, array[i].x, array[i].y);
+                            array[i].state = "damaged";
+                            break;
+                        case "playerTank":
+                            bulletAftermath(array, bullet[t], SOUNDS.explode, array[i].x, array[i].y);
+                            array.splice(i, 1);
+                            break;
+                        case "enemyTank" :
+                            if (bullet[t].type === "playerBullet") {
+                                bulletAftermath(array, bullet[t], SOUNDS.shootBrick, array[i].x, array[i].y);
+                                resultsCalc(array[i].subType, array[i]);
+                                array.splice(i, 1);
+                            }
+                            break;
+                    }
+                }
             }
-        }
-    }
-    return possible;
-}
-
-function drawPlayerBullet(arr) {
-    for (var i = 0; i < arr.length; i++) {
-        if (arr[i].type === "playerBullet")
-            arr[i].draw();
-    }
-}
-
-function updateBullet(arr) {
-    bulletCollision(arr);
-}
-
-function bulletCollision(arr) {
-    for (var i = 0; i < arr.length; i++) {
-        if (arr[i].type === "playerBullet") {
-            arr[i].move(arr);
-            if (arr[i].y < 1) {
-                explosionInit(arr[i].x - 24, 0, arr);
-                bulletAftermath(arr, SOUNDS.shootOver);
-            } else if (arr[i].x < 1) {
-                explosionInit(0, arr[i].y - 24, arr);
-                bulletAftermath(arr, SOUNDS.shootOver);
-            } else if (arr[i].x > BATTLEFIELD_WIDTH) {
-                explosionInit(arr[i].x - 48, arr[i].y - 24, arr);
-                bulletAftermath(arr, SOUNDS.shootOver);
-            } else if (arr[i].y > BATTLEFIELD_HEIGHT) {
-                explosionInit(arr[i].x - 24, arr[i].y - 48, arr);
-                bulletAftermath(arr, SOUNDS.shootOver);
-            }
-        }
-        if (checkBullets(arr)) {
-            if (collision(getPlayerBullet(), arr[i]) && arr[i].type === "brick") {
-                explosionInit(arr[i].x, arr[i].y, arr);
-                deleteBlock(arr, arr[i].x, arr[i].y);
-                bulletAftermath(arr, SOUNDS.shootBrick);
-            } else if (collision(getPlayerBullet(), arr[i]) && arr[i].type === "concrete") {
-                explosionInit(arr[i].x, arr[i].y, arr);
-                bulletAftermath(arr, SOUNDS.shootOver);
-            } else if (collision(getPlayerBullet(), arr[i]) && arr[i].type === "flag") {
-                bulletAftermath(arr, SOUNDS.explode);
-                arr[i].state = "damaged";
-            } else if (collision(getPlayerBullet(), arr[i]) && (arr[i].type === "enemyTankFat" ||
-                    arr[i].type === "enemyTankFast" || arr[i].type === "enemyTankNormal")) {
-                explosionInit(arr[i].x, arr[i].y, arr);
-                deleteBlock(arr, arr[i].x, arr[i].y);
-                bulletAftermath(arr, SOUNDS.shootBrick);
+            if (bullet[t].y < 1) {
+                bulletAftermath(array, bullet[t], SOUNDS.shootOver, bullet[t].x - 24, bullet[t].y);
+            } else if (bullet[t].x < 1) {
+                bulletAftermath(array, bullet[t], SOUNDS.shootOver, bullet[t].x, bullet[t].y - 24);
+            } else if (bullet[t].x > BATTLEFIELD_WIDTH) {
+                bulletAftermath(array, bullet[t], SOUNDS.shootOver, bullet[t].x - 48, bullet[t].y - 24);
+            } else if (bullet[t].y > BATTLEFIELD_HEIGHT) {
+                bulletAftermath(array, bullet[t], SOUNDS.shootOver, bullet[t].x - 24, bullet[t].y - 48);
             }
         }
     }
 }
 
-function bulletAftermath(arr, soundType, x, y) {
-    bulletDestroy(arr);
-    explosionDelete(arr);
-    sound.play(soundType);
-    deleteBlock(arr, x, y);
+function bulletAftermath(array, bullet, soundName, x, y) {
+    array.splice(array.indexOf(bullet), 1);
+    sound.play(soundName);
+    explosionInit(x, y, array, IMAGES_COORDS.explosion.x, IMAGES_COORDS.explosion.y);
 }

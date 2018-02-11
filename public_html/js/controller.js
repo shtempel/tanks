@@ -1,12 +1,9 @@
 "use strict";
 
 document.onkeydown = function (event) {
-    //console.log(event.keyCode);
     KEY[event.keyCode] = true;
-
     if (event.keyCode == K_P) {
-        //pauseGame();
-        alert("You pressed pause");
+        pauseGame();
     }
 
     if (event.keyCode === K_ENTER && state === GAME_STATE.STATE_GAME_LAUNCHED) {
@@ -18,34 +15,37 @@ document.onkeydown = function (event) {
     }
 
     if (event.keyCode === K_SPACE && state === GAME_STATE.STATE_PLAY) {
-        getPlayerTank(OBJECTS).shoot(OBJECTS);
+        getObject(OBJECTS, "playerTank")[0].shoot(OBJECTS);
     }
 };
 
 document.onkeyup = function (event) {
     KEY[event.keyCode] = false;
-    getPlayerTank(OBJECTS).setStop();
+    if (getObject(OBJECTS, "playerTank").length > 0) {
+        getObject(OBJECTS, "playerTank")[0].setStop();
+    }
 };
 
-function keyboardEvent(arr) {
+function keyboardEvent(array) {
+    var playerTank = getObject(array, "playerTank")[0];
     if (KEY[K_UP]) {
-        getPlayerTank(arr).playerMove(DIRECTIONS.UP, arr);
-        getPlayerTank(arr).setMoving();
+        playerTank.moveUp(array, playerTank);
+        playerTank.setMoving();
         return;
     }
     if (KEY[K_DOWN]) {
-        getPlayerTank(arr).playerMove(DIRECTIONS.DOWN, arr);
-        getPlayerTank(arr).setMoving();
+        playerTank.moveDown(array, playerTank);
+        playerTank.setMoving();
         return;
     }
     if (KEY[K_LEFT]) {
-        getPlayerTank(arr).playerMove(DIRECTIONS.LEFT, arr);
-        getPlayerTank(arr).setMoving();
+        playerTank.moveLeft(array, playerTank);
+        playerTank.setMoving();
         return;
     }
     if (KEY[K_RIGHT]) {
-        getPlayerTank(arr).playerMove(DIRECTIONS.RIGHT, arr);
-        getPlayerTank(arr).setMoving();
+        playerTank.moveRight(array, playerTank);
+        playerTank.setMoving();
         return;
     }
 }

@@ -14,21 +14,16 @@ Sound.prototype.stop = function (soundName) {
 };
 
 function tankSounds(tank) {
-    if (tank.getMoving()) {
-        sound.stop(SOUNDS.stop);
-        sound.play(SOUNDS.run);
+    if (state === GAME_STATE.STATE_PLAY) {
+        if (tank.getMoving()) {
+            sound.stop(SOUNDS.stop);
+            sound.play(SOUNDS.run);
+        } else if (!tank.getMoving()) {
+            sound.stop(SOUNDS.run);
+            sound.play(SOUNDS.stop);
+        }
     } else {
         sound.stop(SOUNDS.run);
-        sound.play(SOUNDS.stop);
-    }
-}
-
-function soundManager(arr) {
-    for (var i = 0; i < arr.length; i++) {
-        switch (arr[i].type) {
-            case "playerTank":
-                //tankSounds(arr[i]);
-                break;
-        }
+        sound.stop(SOUNDS.stop);
     }
 }

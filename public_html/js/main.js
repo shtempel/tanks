@@ -1,129 +1,83 @@
 "use strict";
 
-var state = GAME_STATE.STATE_GAME_LAUNCHED,
+var game,
+        score,
+        state = GAME_STATE.STATE_GAME_LAUNCHED,
         startScreen = new StartScreen(),
+        splashScreen = new SplashScreen(),
         battleScreen = new BattleScreen(),
-        gameOverScreen = new GameOverScreen(),
-        resultScreen = new ResultScreen(),
-        winScreen = new WinScreen(),
-        sound = new Sound(),
-        game,
-        timeBefore;
+        gameOver = new GameOverScreen(),
+        victory = new WinScreen(),
+        result = new ResultScreen(),
+        sound = new Sound();
 
-function main() {
+function runner() {
     game = setInterval("gameLoop()", 1000 / FPS);
 }
 
-
 function gameLoop() {
-    //requestAnimationFrame(gameLoop);
     switch (state) {
         case GAME_STATE.STATE_GAME_LAUNCHED:
-            start();
+            startGame();
             break;
         case GAME_STATE.STATE_PLAY:
-            initGame();
-            updateGame();
+            gameInProgress(OBJECTS);
             break;
         case GAME_STATE.STATE_SPLASH:
-            battleScreen.drawSplash();
+            drawSplash(splashScreen);
             break;
         case GAME_STATE.STATE_RESULTS:
-            resultScreen.draw();
+            endGame();
             break;
         case GAME_STATE.STATE_GAME_OVER:
-            gameOverScreen.draw();
+            endGame();
             break;
         case GAME_STATE.STATE_WIN:
-            winScreen.draw();
+            endGame();
             break;
     }
 }
 
-function start() {
-    OBJECTS = [];
+function  startGame() {
     SCORE = 0;
-    resetDestroyed();
-    timeBefore = -100;
-    initMap(OBJECTS);
-    initTank(OBJECTS);
+    OBJECTS = [];
     startScreen.draw();
+    initMap(OBJECTS);
+    initTanks(OBJECTS);
 }
 
-function initGame() {
-    battleScreen.drawMap(OBJECTS);
-    drawAllTanks(OBJECTS);
-    keyboardEvent(OBJECTS);
-    drawPlayerBullet(OBJECTS);
-    drawExplosions(OBJECTS);
-    soundManager(OBJECTS);
+function gameInProgress(array) {
+    keyboardEvent(array);
+    battleScreen.drawMap(array);
+    drawAllTanks(array);
+    drawBullets(array);
+    updateBullet(array);
+    gamePulse(array);
+    enemyMove(getObject(array, "enemyTank"), array);
+    explosionLife(array);
+    tankSounds(getObject(array, "playerTank")[0], array);
 }
 
-function gameOver() {
-    for (var i = 0; i < OBJECTS.length; i++) {
-        if (OBJECTS[i].state === "damaged" || !getPlayerTank()) {
-            if (timeBefore < 0) {
-                ++timeBefore;
-            } else {
-                state = GAME_STATE.STATE_GAME_OVER;
-                break;
-            }
-        }
+
+function gamePulse(array) {
+    if (getObject(array, "enemyTank").length < 1) {
+        return state = GAME_STATE.STATE_WIN;
+    } else if (getObject(array, "playerTank").length === 0 ||
+            getObject(array, "flag")[0].state === "damaged") {
+        return state = GAME_STATE.STATE_GAME_OVER;
     }
 }
 
-function victory() {
-    if (getEnemyTanks() < 1) {
-        if (timeBefore < 0) {
-            ++timeBefore;
-        } else {
-            state = GAME_STATE.STATE_WIN;
-        }
+function endGame() {
+    switch (state) {
+        case GAME_STATE.STATE_GAME_OVER:
+            gameOver.draw();
+            break;
+        case GAME_STATE.STATE_WIN:
+            victory.draw();
+            break;
+        case GAME_STATE.STATE_RESULTS:
+            result.draw();
+            break;
     }
-}
-
-function updateGame() {
-    updateBullet(OBJECTS, getPlayerTank());
-    soundManager(OBJECTS);
-    victory();
-    gameOver();
-}
-
-function getEnemyTanks() {
-    var enemyTanks = [];
-    for (var i = 0; i < OBJECTS.length; i++) {
-        if (OBJECTS[i].type === "enemyTankFast" || OBJECTS[i].type === "enemyTankFat" ||
-                OBJECTS[i].type === "enemyTankNormal") {
-            enemyTanks.push(OBJECTS[i]);
-        }
-    }
-    return enemyTanks.length;
-}
-
-function getPlayerTank() {
-    var playerTank;
-    for (var i = 0; i < OBJECTS.length; i++) {
-        if (OBJECTS[i].type == "playerTank") {
-            playerTank = OBJECTS[i];
-        }
-    }
-    return playerTank;
-}
-
-function getPlayerBullet() {
-    var playerBullet;
-    for (var i = 0; i < OBJECTS.length; i++) {
-        if (OBJECTS[i].type == "playerBullet") {
-            playerBullet = OBJECTS[i];
-        }
-    }
-    return playerBullet;
-}
-
-function resetDestroyed() {
-    TANKS_DESTROYED = {
-        fat: 0,
-        fast: 0,
-        normal: 0
-    };
 }

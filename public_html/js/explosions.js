@@ -42,8 +42,7 @@ function deleteBlock(arr, x, y) {
             arr.splice(i, 1);
         } else if (arr[i].type === "flag" && arr[i].x == x && arr[i].y == y) {
             arr.splice(i, 1);
-        } else if ((arr[i].type === "enemyTankFat" || arr[i].type === "enemyTankFast" ||
-                arr[i].type === "enemyTankNormal") && arr[i].x == x && arr[i].y == y) {
+        } else if ((arr[i].type === "enemyTankNormal") && arr[i].x == x && arr[i].y == y) {
             if (arr[i].type === "enemyTankFat") {
                 ++TANKS_DESTROYED.fat;
             } else if (arr[i].type === "enemyTankFast") {
