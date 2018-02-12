@@ -51,19 +51,19 @@ Bullet.prototype.draw = function () {
 function center() {
     switch (this.direction) {
         case DIRECTIONS.UP:
-            this.x += 18;
+            this.x += 13;
             this.y -= 3;
             break;
         case DIRECTIONS.DOWN:
-            this.x += 18;
+            this.x += 13;
             this.y += 40;
             break;
         case DIRECTIONS.RIGHT:
-            this.y += 18;
+            this.y += 14;
             this.x += 40;
             break;
         case DIRECTIONS.LEFT:
-            this.y += 18;
+            this.y += 14;
             this.x -= 3;
             break;
     }
