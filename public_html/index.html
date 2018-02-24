@@ -4,17 +4,12 @@
         <meta charset="UTF-8">
         <link rel="icon" href="data:;base64,iVBORw0KGgo=">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="stylesheet" type="text/css" href="css/style.css">   
-        <script type="text/javascript">window.onload = function () {
-                runner();
-            };</script>    
+        <link rel="stylesheet" type="text/css" href="css/style.css">
     <body>	
         <div id = "srcImg">
             <img src="img/sprite.png" id = "sprite"/>
         </div>
-        <div class="canvas">
-            <canvas id="canvas" width="624" height="624"></canvas>          
-        </div>
+        <div id="canvas"></div>
         <div class="side-help">
             <span>Move: </span>
             <span>↑↓→←</span>
@@ -23,26 +18,28 @@
             <span>space</span>
             <div class="bla"></div>
             <span>Press "p" key to pause</span>
-             <div class="bla"></div>
+            <div class="bla"></div>
             <span>Press "Enter" key to start</span>
-
         </div>
-        <script type="text/javascript" src="js/constants.js"></script>
-        <script type="text/javascript" src="js/util.js"></script>
-        <script type="text/javascript" src="js/controller.js"></script>
-        <script type="text/javascript" src="js/sound.js"></script>
-        <script type="text/javascript" src="js/tank.js"></script>
-        <script type="text/javascript" src="js/bullet.js"></script>
-        <script type="text/javascript" src="js/levelMap.js"></script>
-        <script type="text/javascript" src="js/levelMap.js"></script>
-        <script type="text/javascript" src="js/explosion.js"></script>
-        <script type="text/javascript" src="js/screens/startScreen.js"></script>
-        <script type="text/javascript" src="js/screens/splashScreen.js"></script>
-        <script type="text/javascript" src="js/screens/battleScreen.js"></script>
-        <script type="text/javascript" src="js/screens/gameOverScreen.js"></script>
-        <script type="text/javascript" src="js/screens/resultScreen.js"></script>
-        <script type="text/javascript" src="js/screens/winScreen.js"></script>
 
+        <script type="text/javascript" src="js/app.js"></script>   
+
+        <script type="text/javascript" src="js/utils/canvas.js"></script>
+        <script type="text/javascript" src="js/utils/data.js"></script>
+        <script type="text/javascript" src="js/utils/helper.js"></script>  
+
+        <script type="text/javascript" src="js/models/tank.js"></script>
+        <script type="text/javascript" src="js/models/bullet.js"></script>
+        <script type="text/javascript" src="js/models/explosion.js"></script>
+        <script type="text/javascript" src="js/models/sound.js"></script>
+        <script type="text/javascript" src="js/models/screens/start.js"></script>
+        <script type="text/javascript" src="js/models/screens/splash.js"></script>
+        <script type="text/javascript" src="js/models/screens/battle.js"></script>
+        <script type="text/javascript" src="js/models/screens/gameOver.js"></script>
+        <script type="text/javascript" src="js/models/screens/victory.js"></script>
+        <script type="text/javascript" src="js/models/screens/score.js"></script>
+
+        <script type="text/javascript" src="js/controllers/controller.js"></script>
 
         <audio id="stageStart" src="sound/stageStart.mp3"></audio>
         <audio id="shootOver" src="sound/shootOver.mp3"></audio>
@@ -52,10 +49,6 @@
         <audio id="bomb0" src="sound/bomb0.mp3"></audio>
         <audio id="bomb1" src="sound/bomb1.mp3"></audio>
         <audio id="food" src="sound/food.mp3"></audio>
-
-
-
-        <script type="text/javascript" src="js/main.js"></script>
 
     </body>
 </html>

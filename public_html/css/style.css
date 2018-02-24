@@ -4,12 +4,6 @@ body {
     padding: 0;
 }
 
-.canvas {
-    width: 624px;
-    height: 624px;
-    float: left;
-}
-
 .btn-div {
     margin: 10px auto;
     width: 200px;
