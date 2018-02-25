@@ -32,6 +32,7 @@
             this.y -= speed;
         } else {
             STATE = gameState;
+			this.y = 624;
             return;
         }
     };

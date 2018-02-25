@@ -120,7 +120,10 @@
             return STATE = gameState.VICTORY;
         } else if (helper.getObject(array, "playerTank").length === 0 ||
                 helper.getObject(array, "flag")[0].state === "damaged") {
-            return STATE = gameState.GAME_OVER;
+					setTimeout(function(){
+						return STATE = gameState.GAME_OVER;
+					}, 1000);
+            
         }
     }
 
